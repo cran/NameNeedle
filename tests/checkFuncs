@@ -1,0 +1,145 @@
+###
+### CHECKFUNCS.R
+###
+
+## NOTE: We cannot give this file a name ending in '.R', since that
+## would force 'R CMD check' to try to run it as a standalone test.
+## Instead, we want to be able to reuse the code in a number of
+## different test runs, loading it with 'source'.
+
+
+##-----------------------------------------------------------------------------
+checkEquals <- function(target,
+                        current,
+                        msg="",
+                        tolerance=.Machine$double.eps^0.5,
+                        checkNames=TRUE,
+                        ...) {
+    ## Check arguments
+    if (missing(current)) {
+        stop(sprintf("argument %s is missing",
+                     sQuote("current")))
+    }
+
+    if (!is.numeric(tolerance)) {
+        stop(sprintf("argument %s must be numeric",
+                     sQuote("tolerance")))
+    } else if (!(length(tolerance) == 1)) {
+        stop(sprintf("argument %s must be of length 1",
+                     sQuote("tolerance")))
+    }
+
+    if (!is.logical(checkNames)) {
+        stop(sprintf("argument %s must be logical",
+                     sQuote("checkNames")))
+    } else if (!(length(checkNames) == 1)) {
+        stop(sprintf("argument %s must be of length 1",
+                     sQuote("checkNames")))
+    }
+
+    ## Begin processing
+    if (!identical(TRUE, checkNames)) {
+        names(target) <- NULL
+        names(current) <- NULL
+    }
+
+    result <- all.equal(target,
+                        current,
+                        tolerance=tolerance,
+                        ...)
+    if (!identical(result, TRUE)) {
+        stop(paste(result, collapse="\n"), msg)
+    } else {
+        return(TRUE)
+    }
+}
+
+
+##-----------------------------------------------------------------------------
+checkEqualsNumeric <- function(target,
+                               current,
+                               msg="",
+                               tolerance=.Machine$double.eps^0.5,
+                               ...) {
+    ## Check arguments
+    if (missing(current)) {
+        stop(sprintf("argument %s is missing",
+                     sQuote("current")))
+    }
+
+    if (!is.numeric(tolerance)) {
+        stop(sprintf("argument %s must be numeric",
+                     sQuote("tolerance")))
+    } else if (!(length(tolerance) == 1)) {
+        stop(sprintf("argument %s must be of length 1",
+                     sQuote("tolerance")))
+    }
+
+    if (!is.logical(checkNames)) {
+        stop(sprintf("argument %s must be logical",
+                     sQuote("checkNames")))
+    } else if (!(length(checkNames) == 1)) {
+        stop(sprintf("argument %s must be of length 1",
+                     sQuote("checkNames")))
+    }
+
+    ## Begin processing
+    result <- all.equal.numeric(as.vector(target),
+                                as.vector(current),
+                                tolerance=tolerance,
+                                ...)
+    if (!identical(result, TRUE)) {
+        stop(paste(result, collapse="\n"), msg)
+    } else {
+        return(TRUE)
+    }
+}
+
+
+##-----------------------------------------------------------------------------
+checkException <- function(expr,
+                           msg="",
+                           silent=FALSE) {
+    ## Begin processing
+    result <- try(eval(expr, envir=parent.frame()), silent=silent)
+    if (!inherits(result, "try-error")) {
+        stop("*** Test did not generate error as expected.\n", msg)
+    } else {
+        return(TRUE)
+    }
+}
+
+
+##-----------------------------------------------------------------------------
+checkIdentical <- function(target,
+                           current,
+                           msg="") {
+    ## Begin processing
+    result <- identical(target, current)
+    if (!identical(result, TRUE)) {
+        stop(paste(result, collapse="\n"), msg)
+    } else {
+        return(TRUE)
+    }
+}
+
+
+##-----------------------------------------------------------------------------
+checkTrue <- function(expr,
+                      msg="") {
+    ## Check arguments
+    if (missing(expr)) {
+        stop(sprintf("argument %s is missing",
+                     sQuote("expr")))
+    }
+
+    ## Begin processing
+    result <- eval(expr)
+    names(result) <- NULL
+    if (!identical(result, TRUE)) {
+        stop("*** Test not TRUE.\n", msg)
+    } else {
+        return(TRUE)
+    }
+}
+

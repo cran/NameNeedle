@@ -1,0 +1,47 @@
+			Dear Emacs, please make this -*-Text-*- mode!
+	**************************************************
+	*						 *
+	*	       1.2 SERIES NEWS			 *
+	*						 *
+	**************************************************
+
+
+		CHANGES IN R VERSION 1.2.0
+
+ADMINISTRATIVE
+
+    o	Changed LICENSE to Apache 2.0
+
+		CHANGES IN R VERSION 1.1.2
+
+BUG FIXES
+
+    o	Made compatible with new R check steps that verify DESCRIPTION
+        and NAMESPACE dependencies.
+
+		CHANGES IN R VERSION 1.1.1
+
+NEW FEATURES
+
+    o	Added NEWS file.
+
+BUG FIXES
+
+    o	Lots of documentation updates.
+
+
+		CHANGES IN R VERSION 1.1.0
+
+NEW FEATURES
+
+    o	Reorganized package structure to match current standards.
+
+    o	Created package unit test.
+
+
+		CHANGES IN R VERSION 1.0.0
+
+NEW FEATURES
+
+    o	Released as new package.
+

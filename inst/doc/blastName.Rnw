@@ -1,0 +1,241 @@
+%\VignetteIndexEntry{NameNeedle}
+%\VignetteKeywords{Needleman-Wunsch, Global Alignment, Cell Line Names}
+%\VignetteDepends{stats}
+%\VignettePackage{NameNeedle}
+\documentclass{article}
+
+\usepackage{hyperref}
+
+\newcommand{\Rfunction}[1]{{\texttt{#1}}}
+\newcommand{\Robject}[1]{{\texttt{#1}}}
+\newcommand{\Rclass}[1]{{\texttt{#1}}}
+\newcommand{\Rpackage}[1]{{\textit{#1}}}
+
+\title{Sequence Alignment and Cell Line Names}
+\author{Kevin R. Coombes}
+
+\begin{document}
+
+\maketitle
+\tableofcontents
+
+\section{Introduction}
+
+A problem that frequently plagues statistical analysts who are trying
+to combine data from two or more sources is that sample identifiers
+are entered inconsistently in the two data sets. This problem appears
+to be particularly prevalent in the world of cell line research, where
+no standard exists to define the names. Most cell line names can be
+broken down into three parts: an alphabetic prefix, a numeric
+identifier, and an optional alphanumeric suffix. Common problems
+include both the introduction of (apparently random) punctuation
+between the parts and abbreviation of the prefix (presumably under the
+belief that, within the context of the experiment, everyone will know
+what the abbreviation stands for). We recognized that the problem of
+matching cell line names from two experiments was related to the
+problem of aligning biological sequence data. As a result, we
+implemented a straightforward version of the Needleman-Wunsch global
+alignment algorithm that can be applied to this problem. This
+vignette explains how to use the \Rpackage{NameNeedle} package to
+match cell line names.
+
+\section{Getting Started}
+
+We start by loading the package into the current R session.
+<<lib>>=
+library(NameNeedle)
+@ 
+
+\section{Aligning Two Character Strings}
+
+The basic function is called \Rfunction{needles} and implements the
+Needleman-Wunsch algorithm for aligning two text strings. The
+simplest use is to just supply the text strings directly:
+<<one>>=
+needles("hcc-123", "hcc1243")
+@ 
+The return value includes the optimal alignments of the two strings, a
+score, the ``score matrix'' (\Robject{sm}) and the ``backtrace
+matrix'' (\Robject{dm}). All of these items depend on a set of
+parameters, which can be supplied to the \Rfunction{needles} function
+as a list. The default value is
+<<default>>=
+defaultNeedleParams
+@ 
+Notice that the \Robject{GAPCHAR} component specifies the character to
+use in the alignment strings to indicate that the best alignment
+involves leaving a gap in one string rather than matching the
+characters directly in the other string. The other three parameters
+determine the rewards (for an exact match) or penalties (for
+mismatches or gaps) that contribute to the score.
+
+A simple way to alter the parameters is to start with the default
+values and modify the entries:
+<<myParam>>=
+myParams <- defaultNeedleParams
+myParams$MISMATCH <- -2
+myParams$MATCH <- 2
+@ 
+We can re-run the algorithm using our own parameter list.
+<<two>>=
+needles("hcc-123", "hcc1243", myParams)
+@ 
+Note that, in this case, the alignment does not change, but the score
+and the score matrix both change to reflect the altered parameters.
+In more complex cases, the actual alignments can change depending
+on the set of parameters. We find that the values in \Robject{myParams}
+work well for matching cell line names.
+
+\section{Cell Line Names}
+
+The \Rpackage{NameNeedle} library includes a sample data set
+consisting of the actual cell line names, as they were presented to
+us, from three related experiments. We use the \Rfunction{data}
+command to load these names into the current R session.
+<<data>>=
+data(cellLineNames)
+ls()
+@ 
+Now we review the cell line names.
+<<sf2>>=
+class(sf2Names)
+length(sf2Names)
+sf2Names[1:10]
+@ 
+
+<<rppa>>=
+class(rppaNames)
+length(rppaNames)
+rppaNames[1:10]
+@ 
+
+<<illu>>=
+class(illuNames)
+length(illuNames)
+summary(illuType)
+illuNames[1:10]
+@ 
+
+\subsection{Matching One Cell Line Name}
+
+The \Rfunction{needles} function works on one character string at a
+time. (If you supply a character vector of length greater than one,
+it silently ignores everything except the first entry). In order to
+find the best match for one name in a list of possibilities, we use
+the \Rfunction{needleScores} function. For example, suppose we want to
+find the best match for the following name
+<<tester>>=
+probeName <- sf2Names[6]
+probeName
+@ 
+in the character vector \Robject{illuNames}. Then we simply write
+<<scores>>=
+scores <- needleScores(probeName, illuNames, myParams)
+summary(scores)
+@ 
+We see that the highest score is $11$. We can use the usual R tools
+to figure out which character string gives the highest score (and thus
+the best match).
+<<w>>=
+w <- which(scores==max(scores))
+illuNames[w]
+@ 
+We note that the match differs from the probe name by the insertion of
+a space character between the alphabetic prefix and the numerical
+identifier in the name.
+
+\subsection{Matching All Cell Line Names}
+
+More generally, we would like to match two complete lists of names.
+For example, we might want to match the names in \Robject{sf2names}
+with the names in \Robject{rppaNames}. There is no special function
+to perform this task. Instead, we can simply run through a loop.
+<<matchRPPA>>=
+go <- proc.time()
+matchscore <- matchcode <- rep(NA, length(sf2Names))
+for (j in 1:length(sf2Names)) {
+  scores <- needleScores(sf2Names[j], rppaNames, myParams)
+  matchcode[j] <- paste(which(scores==max(scores)), collapse=',')
+  matchscore[j] <- max(scores)
+}
+used <- proc.time() - go
+@ 
+Note, however, that we must allow for the possibility that multiple
+names in \Robject{rppaNames} will provide the best match (highest
+score) for any given name in \Robject{sf2Names}. We have saved the
+indices of all the best matches in the \Robject{matchcode} variable,
+as a comma-separated character string. The next loop expands those
+indices to the actual names, which are stored as semicolon-separated
+character strings.
+<<rppaMatch>>=
+rppaMatch <- sapply(matchcode, function(x) {
+  y <- as.numeric(strsplit(x, ',')[[1]])
+  paste(rppaNames[y], collapse="; ")
+})
+@ 
+For example, we have
+<<mismatch>>=
+i <- 116
+sf2Names[i]
+rppaMatch[i]
+@ 
+In this case, sample ``\textit{HCC-2998}'' was used in the SF2 study but
+not in the RPPA study, and there are two cell lines in the RPPA study
+that give equally good (although incorrect) matches. If we want to
+check the actual alignments, we can again use the basic
+\Rfunction{needles} function.
+<<needles>>=
+x <- needles("HCC-2998", "HCC2279", myParams)
+x$align1
+x$align2
+@ 
+
+For completeness, we also match \Robject{sf2names} to \Robject{illuNames}.
+<<illuMatch>>=
+go <- proc.time()
+imatchscore <- imatchcode <- rep(NA, length(sf2Names))
+for (j in 1:length(sf2Names)) {
+  scores <- needleScores(sf2Names[j], illuNames, myParams)
+  imatchcode[j] <- paste(which(scores==max(scores)), collapse=',')
+  imatchscore[j] <- max(scores)
+}
+illuMatch <- sapply(imatchcode, function(x) {
+  y <- as.numeric(strsplit(x, ',')[[1]])
+  paste(illuNames[y], collapse="; ")
+})
+iused <- proc.time() - go
+used
+iused
+used + iused
+@ 
+
+We can combine the results into a data frame.
+<<results>>=
+matcher <- data.frame(rppaMatch=rppaMatch, rppaScore=matchscore,
+                      illuMatch=illuMatch, illuScore=imatchscore)#,combined)
+rownames(matcher) <- sf2Names
+matcher[1:10,]
+@ 
+
+
+<<echo=FALSE,eval=FALSE>>=
+combined <- read.table("combined.tsv", sep="\t", header=TRUE, row.names=1)
+matcher <- data.frame(rppaMatch=rppaMatch, rppaScore=matchscore,
+                      illuMatch=illuMatch, illuScore=imatchscore,
+                      combined)
+write.table(matcher, file="namesMatched.tsv", sep="\t", quote=FALSE, col.names=NA)
+@ 
+
+\section{Conclusions}
+
+A simple implementation of the Needleman-Wunsch global alignment
+algorithm works reasonably well as a first approximation for matching
+cell line names from different datasets. We must note, however, that
+more sophisticated tools are available for aligning biological sequences;
+many such tools are implemented in the \Rpackage{Biostrings} package from
+Bioconductor.
+
+\end{document}
+
+
+

@@ -1,0 +1,10 @@
+###
+### NAMESPACE
+###
+
+import(stats)
+
+export("needles")
+export("needleScores")
+export("defaultNeedleParams")
+
