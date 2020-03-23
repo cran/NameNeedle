@@ -6,6 +6,12 @@
 	**************************************************
 
 
+		CHANGES IN R VERSION 1.2.6
+
+BUG FIXES
+
+    o	Updated test script to use "stringsAsFactors=TRUE".
+
 		CHANGES IN R VERSION 1.2.0
 
 ADMINISTRATIVE

@@ -44,7 +44,7 @@ for (j in seq_along(sf2Names)) {
     imatchcode[j] <- paste(which(scores == max(scores)), collapse=',')
     imatchscore[j] <- max(scores)
 }
-
+ 
 illuMatch <- sapply(imatchcode,
                     function(x) {
                         y <- as.numeric(strsplit(x, ',')[[1]])
@@ -55,7 +55,8 @@ illuMatch <- sapply(imatchcode,
 matcher <- data.frame(rppaMatch=rppaMatch,
                       rppaScore=matchscore,
                       illuMatch=illuMatch,
-                      illuScore=imatchscore)
+                      illuScore=imatchscore,
+                      stringsAsFactors = TRUE)
 
 ## Save results to disk (uncomment iff code changed)
 prevResults.filename <- "namesMatched.tsv"
@@ -66,7 +67,8 @@ prevResults.filename <- "namesMatched.tsv"
 prevResults <- local({
     prevResults.pathname <- file.path(extdata.dir, prevResults.filename)
     colClasses <- c("integer", rep(c("factor", "numeric"), 2))
-    df <- read.delim(prevResults.pathname, colClasses=colClasses, header=TRUE)
+    df <- read.delim(prevResults.pathname, colClasses=colClasses,
+                     header=TRUE, stringsAsFactors = TRUE)
     df[, -1]    ## Toss unwanted first column (row numbers)
 })
 
