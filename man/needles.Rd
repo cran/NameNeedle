@@ -3,11 +3,18 @@
 \alias{needleScores}
 \alias{defaultNeedleParams}
 \title{
-  Needleman-Wunsch global alignment algorithm
+  Needleman-Wunsch simple global alignment algorithm
 }
 \description{
-  This package contains a simple implementation of the Needleman-Wunsch
-  global alignment algorithm.
+  The Needleman-Wunsch simple gap algorithm was one of the first methods
+  introduced for global alignment of biological sequences. The same algorithm
+  can be used to match cell line names or sample names from two related data
+  sets; we provide examples in the documentation, using data that accompanies
+  this package.
+  
+  While the \pkg{NameNeedle} package can be used for biological sequence
+  alignment, the \pkg{Biostrings} package from Bioconductor contains much more
+  sophisticated tools for that problem.
 }
 \usage{
 needles(pattern, subject, params=defaultNeedleParams)
