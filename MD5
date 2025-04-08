@@ -1,12 +1,12 @@
-b610d06de6e5fdb27dc82a497a0900da *DESCRIPTION
+85fd50a17b2310e20e21799dee60381f *DESCRIPTION
 003114af41603b7140b2da9d556cdcd9 *NAMESPACE
 42cbab545ce979bdf1e4edd0b321e06a *NEWS
 a5e295bc5391aae70f7899b7ec70f11f *R/needles.R
-c4cf5c6bc7b41b6750f12fd45dd733ee *build/vignette.rds
-0c71a99b14457df236683791ab973cef *data/cellLineNames.RData
+02fa1628d4360e8a00672ea143a7d4e8 *build/vignette.rds
+f5cced5052585cbfdf5dfbb1efcff8fa *data/cellLineNames.RData
 8ec361322a3a36f5e049f9ce05c744fa *inst/doc/blastName.R
 1b08d8b9c6674a86ad2bef16f0e8ee9a *inst/doc/blastName.Rnw
-dc2ef91d05fce4a8989e27bdb063958c *inst/doc/blastName.pdf
+13bc823c72e4581dd0a4557863f2ac5e *inst/doc/blastName.pdf
 52e3a2891ad15c0fcccb90743820efe2 *inst/extdata/IlluminaNames.tsv
 7cbc3f74eb1797edea797064dc35da54 *inst/extdata/namesMatched.tsv
 b24224ab1e055e04a5ecdf6c0b30700a *inst/extdata/rppaNames.tsv

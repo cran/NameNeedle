@@ -1,9 +1,9 @@
 Package: NameNeedle
-Version: 1.2.7
-Date: 2023-08-19
+Version: 1.2.8
+Date: 2025-04-08
 Title: Using Needleman-Wunsch to Match Sample Names
-Author: Kevin R. Coombes
-Maintainer: Kevin R. Coombes <krc@silicovore.com>
+Authors@R: person(given = c("Kevin", "R."), family = "Coombes",
+                  role = c("aut", "cre"), email = "krc@silicovore.com")
 Description: The Needleman-Wunsch global alignment algorithm can be
   used to find approximate matches between sample names in different
   data sets. See Wang et al. (2010) <doi:10.4137/CIN.S5613>.
@@ -13,6 +13,8 @@ Suggests: Biostrings
 License: Apache License (== 2.0)
 URL: http://oompa.r-forge.r-project.org/
 NeedsCompilation: no
-Packaged: 2023-08-19 19:19:27 UTC; KRC
+Packaged: 2025-04-08 12:51:48 UTC; kevin
+Author: Kevin R. Coombes [aut, cre]
+Maintainer: Kevin R. Coombes <krc@silicovore.com>
 Repository: CRAN
-Date/Publication: 2023-08-19 19:42:31 UTC
+Date/Publication: 2025-04-08 13:20:02 UTC
